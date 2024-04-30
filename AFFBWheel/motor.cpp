@@ -13,9 +13,9 @@ void Motor::begin()
   pinMode(9, OUTPUT);
   pinMode(10, OUTPUT);
 
-  #ifdef MOTOR_ENABLE_PIN
-    pinMode(MOTOR_ENABLE_PIN, OUTPUT);
-    digitalWriteFast(MOTOR_ENABLE_PIN, 0);
+  #ifdef MOTOR_DIR_PIN
+    pinMode(MOTOR_DIR_PIN, OUTPUT);
+    digitalWriteFast(MOTOR_DIR_PIN, 0);
   #endif
 }
 
@@ -23,29 +23,24 @@ void Motor::begin()
 void Motor::setForce(int16_t force)
 {
   force=constrain(force,-16383,16383);
-
-  #ifdef MOTOR_ENABLE_PIN
-  if (force!=0)
-    digitalWriteFast(MOTOR_ENABLE_PIN, 1)
-  else
-    digitalWriteFast(MOTOR_ENABLE_PIN, 0);
-  #endif
-
   if (force>0)
   {
     OCR1A=(1+force)>>bitShift;
-    OCR1B=0;
+    #ifdef MOTOR_DIR_PIN
+      digitalWriteFast(MOTOR_DIR_PIN, 1);  //逆时针
+    #endif
   }
   else 
   if (force<0)  
   {
-    OCR1A=0;
-    OCR1B=(1-force)>>bitShift;
+    OCR1A=(1-force)>>bitShift;
+    #ifdef MOTOR_DIR_PIN
+      digitalWriteFast(MOTOR_DIR_PIN, 0); //顺时针
+    #endif
   }
   else
   {
     OCR1A=0;
-    OCR1B=0;
   }
 }
 

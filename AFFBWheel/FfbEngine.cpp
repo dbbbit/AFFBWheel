@@ -116,6 +116,12 @@ int16_t FfbEngine::calculateForce(AxisWheel* axis)
     }
   }
 
+  // user force
+  tmpForce = smoothForce(axis->velocity);
+  tmpForce = applyGain(tmpForce, settings.gain[USB_EFFECT_DAMPER]);
+  tmpForce = constrain(tmpForce, -16383, 16383);
+  totalForce += tmpForce;
+
   //actuators disabled
   if (!(ffbReportHandler->pidState.status & 2 ) || (!totalForce))
     return 0;
@@ -262,6 +268,7 @@ int16_t FfbEngine::springForce(volatile TEffectState*  effect, int16_t position)
  */
 int16_t FfbEngine::damperForce(volatile TEffectState*  effect, int16_t velocity) 
 {
+    return 0; // use damper gain for smooth force instead
     int32_t  tempForce;
 
     velocity= velocity * maxVelocityDamperC;
@@ -283,6 +290,18 @@ int16_t FfbEngine::damperForce(volatile TEffectState*  effect, int16_t velocity)
     return tempForce;
 }
 
+/*
+ * smooth set by user: Forces moving in the same direction, 
+ * Helps with steering while drifting
+ */
+int16_t FfbEngine::smoothForce(int16_t velocity) 
+{
+    int32_t  tempForce;
+    int32_t kp = -5;
+    if(abs(velocity) < 20) return 0;
+    tempForce =  (int32_t)(velocity * kp);
+    return tempForce;
+}
 
 /*
  * Inertia effect should oppose acceleration.

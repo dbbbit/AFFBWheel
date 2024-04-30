@@ -73,7 +73,8 @@ class FfbEngine {
     int16_t damperForce(volatile TEffectState*  effect, int16_t velocity);
     int16_t inertiaForce(volatile TEffectState*  effect, AxisWheel* axis);
     int16_t frictionForce(volatile TEffectState*  effect, int16_t velocity);
-    
+    int16_t smoothForce(int16_t velocity);
+
     float maxVelocityDamperC, maxVelocityFrictionC, maxAccelerationInertiaC;
     
   private:

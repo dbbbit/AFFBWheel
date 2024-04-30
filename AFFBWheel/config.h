@@ -25,9 +25,9 @@
 
 //---------------------------Steering axis-------------------------------
 //different types of wheel sensor. Choose only one!
-#define STEER_TYPE ST_ENCODER
+//#define STEER_TYPE ST_ENCODER
 //#define STEER_TYPE ST_TLE5010
-//#define STEER_TYPE ST_AS5600
+#define STEER_TYPE ST_AS5600
 //#define STEER_TYPE ST_MLX90316
 
 //settings for encoder
@@ -53,17 +53,17 @@
 
 //---------------------------I2C----------------------------------------
 //bitbang I2С pins - for MCP23017 and ADS1015
-#define I2C_PIN_SDA   2  //any free pins
-#define I2C_PIN_SCL   7
+#define I2C_PIN_SDA   0  //any free pins
+#define I2C_PIN_SCL   1
 
 #define I2C_DELAY 1
 //---------------------------analog axes---------------------------
 //aux analog axes pins
 //If aux axis is not needed, comment out corresponding line.
-#define PIN_AUX1    A3
-#define PIN_AUX2    A8
-#define PIN_AUX3    A6
-#define PIN_AUX4    A7
+//#define PIN_AUX1    A3
+//#define PIN_AUX2    A8
+//#define PIN_AUX3    A6
+//#define PIN_AUX4    A7
 
 
 //different ways of connecting pedals. Choose only one!
@@ -123,8 +123,8 @@
  * 2 means averaging 4 values, 3 - 8 values and so on.
  */
 //Smoothing for wheel axis. 
-#define MA_LEVEL_WHEEL_POSITION       2
-#define MA_LEVEL_WHEEL_VELOCITY       2
+#define MA_LEVEL_WHEEL_POSITION       3
+#define MA_LEVEL_WHEEL_VELOCITY       5
 #define MA_LEVEL_WHEEL_ACCELERATION   3
 
 //Level of smoothing for analog axes. 
@@ -212,7 +212,7 @@
 #define HAT_CLR_BTNS   //clear buttons state
 
 //----------------------------FFB settings-------------------------------
-//#define MOTOR_ENABLE_PIN      5  //if is set, selected pin will output 1 when FFB is active and 0 otherwise.
+#define MOTOR_DIR_PIN      5  //if is set, selected pin will output 1 when FFB force>0 and 0 otherwise.
 
 //default FFB PWM bitdepth
 #define DEFAULT_FFB_BITDEPTH  9   //15.6 KHz
