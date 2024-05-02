@@ -329,7 +329,6 @@ void setup() {
   
   //load settings
   load();
-
   center();
 
   #ifdef AFC_ON
@@ -1087,6 +1086,7 @@ void readButtons()
 //Centering wheel
 void center()
 {
+  GET_WHEEL_POS;
   CENTER_WHEEL;
   wheel.axisWheel->center();
   Serial.println(F("Centered"));

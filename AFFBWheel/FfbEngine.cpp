@@ -298,7 +298,6 @@ int16_t FfbEngine::smoothForce(int16_t velocity)
 {
     int32_t  tempForce;
     int32_t kp = -5;
-    if(abs(velocity) < 20) return 0;
     tempForce =  (int32_t)(velocity * kp);
     return tempForce;
 }
