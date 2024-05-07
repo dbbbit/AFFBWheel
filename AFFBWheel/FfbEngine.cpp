@@ -63,7 +63,7 @@ int16_t FfbEngine::calculateForce(AxisWheel* axis)
       {
         if (effect->duration != USB_DURATION_INFINITE)
           effect->elapsedTime += timeDiff;
-          
+
         switch (effect->effectType)
         {
           case USB_EFFECT_CONSTANT:
@@ -117,9 +117,12 @@ int16_t FfbEngine::calculateForce(AxisWheel* axis)
   }
 
   // user force
-  tmpForce = smoothForce(axis->velocity);
+  tmpForce = userDamperForce(axis->velocity);
   tmpForce = applyGain(tmpForce, settings.gain[USB_EFFECT_DAMPER]);
-  tmpForce = constrain(tmpForce, -16383, 16383);
+  totalForce += tmpForce;
+
+  tmpForce = userFrictionForce(axis->velocity);
+  tmpForce = applyGain(tmpForce, settings.gain[USB_EFFECT_FRICTION]);
   totalForce += tmpForce;
 
   //actuators disabled
@@ -268,7 +271,7 @@ int16_t FfbEngine::springForce(volatile TEffectState*  effect, int16_t position)
  */
 int16_t FfbEngine::damperForce(volatile TEffectState*  effect, int16_t velocity) 
 {
-    return 0; // use damper gain for smooth force instead
+    return 0; // use damper gain for user damper force instead
     int32_t  tempForce;
 
     velocity= velocity * maxVelocityDamperC;
@@ -294,12 +297,13 @@ int16_t FfbEngine::damperForce(volatile TEffectState*  effect, int16_t velocity)
  * smooth set by user: Forces moving in the same direction, 
  * Helps with steering while drifting
  */
-int16_t FfbEngine::smoothForce(int16_t velocity) 
+int16_t FfbEngine::userDamperForce(int16_t velocity) 
 {
-    int32_t  tempForce;
     int32_t kp = -5;
-    tempForce =  (int32_t)(velocity * kp);
-    return tempForce;
+    int32_t VL  = 16383;
+    int32_t deadBand = 25;
+    if(abs(velocity) < deadBand) return 0;
+    return constrain(sign(velocity) * (abs(velocity) - deadBand) * kp, -VL, VL);
 }
 
 /*
@@ -349,7 +353,8 @@ int16_t FfbEngine::inertiaForce(volatile TEffectState*  effect, AxisWheel* axis)
  */
 int16_t FfbEngine::frictionForce(volatile TEffectState*  effect, int16_t velocity) 
 {
-       
+    return 0;  //disabled use userFriction instead
+
     if (velocity==0)
       return 0;
    
@@ -366,6 +371,37 @@ int16_t FfbEngine::frictionForce(volatile TEffectState*  effect, int16_t velocit
     {
       coefficient=-effect->negativeCoefficient;
       tVelocity=-velocity-effect->deadBand;
+    }
+
+    if (tVelocity > 256)
+    {
+      return coefficient;
+    }
+    else
+    if (tVelocity>0)
+    {
+      return ((int32_t)tVelocity * coefficient) >> 8;
+    }
+
+    return 0;
+}
+
+int16_t FfbEngine::userFrictionForce(int16_t velocity) 
+{
+       
+    if (velocity==0)
+      return 0;
+
+    int16_t coefficient=3000,tVelocity,deadBand;
+    
+    if (velocity>0)
+    {
+      tVelocity=velocity-deadBand;
+    }
+    else
+    {
+      coefficient=-coefficient;
+      tVelocity=-velocity-deadBand;
     }
 
     if (tVelocity > 256)

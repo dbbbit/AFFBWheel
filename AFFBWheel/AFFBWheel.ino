@@ -332,7 +332,7 @@ void setup() {
   center();
 
   #ifdef AFC_ON
-     autoFindCenter();
+    autoFindCenter();
   #endif
 
   while(true)
