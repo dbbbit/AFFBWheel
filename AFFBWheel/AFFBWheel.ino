@@ -329,10 +329,13 @@ void setup() {
   
   //load settings
   load();
-  center();
+  //center();
 
   #ifdef AFC_ON
+    delay(2000);
     autoFindCenter();
+    delay(500);
+    center();
   #endif
 
   while(true)

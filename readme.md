@@ -85,6 +85,19 @@ Disabled axis will be excluded from polling (saving ~45us of computing time) and
 
 You can try to use controller emulator [GIMX](https://gimx.fr/). You will need an Atmega32U4 board (Leonardo/promicro/teensy2/etc) and CP1202 USB-UART adapter.
 
+Or change arduino VID:PID & DeviceName in file
+`C:\Users\UserName\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\boarts.txt`
+
+```
+Example:
+micro.build.vid=0x046d
+micro.build.pid=0xc29b
+micro.build.usb_product="G27 Racing Wheel"
+```
+
+- 0x046d:0xc29b G27 Racing Wheel
+- 0xf055:0x0ffb MMos ForceFeedback 2014
+
 #### [Alternate hardware configurations](#althw).
 
 ### Testing software:
